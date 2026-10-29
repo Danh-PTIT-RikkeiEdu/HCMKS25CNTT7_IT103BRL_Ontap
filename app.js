@@ -21,26 +21,7 @@ const line = "=".repeat(40);
 let choice = "";
 
 
-function findBookingIndex(code) {
-
-}
-
-
-function inputPositiveInteger(message) {
-
-}
-
-
-function calculateTotal(ticketCount, pricePerTicket) {
-
-}
-
-
-function validateBookingCode(code) {
-
-}
-
-
+// case 1
 function displayBookings(list) {
     let totalRevenue = 0;
     let i = 0;
@@ -60,10 +41,69 @@ function displayBookings(list) {
 
 }
 
-
+// case 2
 function addNewBooking() {
+    let inputCode = prompt("Nhập mã vé: ");
+    if (inputCode === null) {
+        console.log("Hủy thao tác");
+    } else {
+        validateBookingCode(inputCode);
+    }
+    let errorMess = validateBookingCode(inputCode);
+    if (errorMess != "") {
+        console.log(errorMess);
+    }
+
 
 }
+
+
+function validateBookingCode(code) {
+    const validateCode = String(code.trim().toUpperCase());
+
+    if (validateCode === "") {
+        return "Chưa nhập mã vé";
+    } else if (validateCode.length < 6) {
+        return "Mã vé tối thiểu 6 ký tự";
+    } else if (!validateCode.startsWith("CIN-")) {
+        return "Mã phải bắt đầu với chuỗi ký tự CIN-";
+    } else if (validateCode.includes(" ")) {
+        return "Mã không được có khoảng trắng";
+    } else if (findBookingIndex(validateCode) !== -1) {
+        return "Mã đã tồn tại";
+    } else {
+        return "";
+    }
+}
+
+
+function findBookingIndex(code) {
+    for (let i = 0; i < bookings.length; i++) {
+        if (bookings[i].bookingCode === code) {
+            return i;
+        }
+    }
+    return -1;
+}
+
+
+function inputPositiveInteger(message) {
+
+}
+
+
+function calculateTotal(ticketCount, pricePerTicket) {
+
+}
+
+
+
+
+
+
+// function addNewBooking() {
+
+// }
 
 
 
@@ -78,16 +118,19 @@ ${line}
 5. Tìm kiếm đơn đặt ve theo tên phim
 0. Thoát chương trình
 ${line}
-Vui lòng nhập lựa chọn của bạn (0 - 5):
-        `) || "";
+Vui lòng nhập lựa chọn của bạn (0 - 5):`);
 
+    if (choice === null) {
+        choice = "0"
+    }
 
     switch (choice.trim()) {
         case "1":
             displayBookings(bookings);
             break;
 
-        case "2":`~`
+        case "2":
+            addNewBooking()
             break;
 
         case "3":
@@ -112,6 +155,6 @@ Vui lòng nhập lựa chọn của bạn (0 - 5):
             console.log("Lỗi! Vui lòng chỉ chọn các chức năng hiện có");
             break;
     }
-} while (choice != 0 && choice != "");
+} while (choice != "0");
 
 
