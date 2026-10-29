@@ -46,20 +46,69 @@ function addNewBooking() {
     let inputCode = prompt("Nhập mã vé: ");
     if (inputCode === null) {
         console.log("Hủy thao tác");
+        return;
     } else {
         validateBookingCode(inputCode);
     }
     let errorMess = validateBookingCode(inputCode);
     if (errorMess != "") {
         console.log(errorMess);
+        return;
     }
 
+    while (true) {
+        let inputNameCustomer = prompt("Nhập tên của quý khách: ");
+        if (inputNameCustomer === null) {
+            console.log("Hủy thao tác");
+            return;
+        } 
 
+        if (inputNameCustomer === "") {
+            console.log("Chưa nhập tên");
+            continue;
+        } 
+
+        const validatedName = validateName(inputNameCustomer);
+        if (validatedName !== "") {
+            break;
+        }
+    }
+
+    while (true) {
+        let inputTitle = prompt("Nhập tên của quý khách: ");
+        if (inputTitle === null) {
+            console.log("Hủy thao tác");
+            return;
+        } 
+
+        if (inputTitle === "") {
+            console.log("Chưa nhập tên");
+            continue;
+        } 
+
+        const validatedName = validateName(inputTitle);
+        if (validatedName !== "") {
+            break;
+        }
+    }
 }
 
 
+function validateName(name) {
+    const words = String(name).trim().toLowerCase().split(/\s+/);
+    let result = [];
+
+    for (let i = 0; i < words.length; i++) {
+        if (words.length > 0) {
+            result.push(words[i].charAt(0).toUpperCase() + words.slice(1))
+        }
+    }
+
+    return result.join(" ");
+}
+
 function validateBookingCode(code) {
-    const validateCode = String(code.trim().toUpperCase());
+    const validateCode = String(code).trim().toUpperCase();
 
     if (validateCode === "") {
         return "Chưa nhập mã vé";
@@ -96,14 +145,6 @@ function calculateTotal(ticketCount, pricePerTicket) {
 
 }
 
-
-
-
-
-
-// function addNewBooking() {
-
-// }
 
 
 
