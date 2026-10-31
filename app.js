@@ -56,41 +56,74 @@ function addNewBooking() {
         return;
     }
 
+    let validatedName = "";
     while (true) {
         let inputNameCustomer = prompt("Nhập tên của quý khách: ");
         if (inputNameCustomer === null) {
             console.log("Hủy thao tác");
             return;
-        } 
+        }
 
-        if (inputNameCustomer === "") {
+        if (inputNameCustomer.trim() === "") {
             console.log("Chưa nhập tên");
             continue;
-        } 
+        }
 
-        const validatedName = validateName(inputNameCustomer);
+        validatedName = validateName(inputNameCustomer);
         if (validatedName !== "") {
             break;
         }
     }
+    
 
+    let validatedTitle = "";
     while (true) {
-        let inputTitle = prompt("Nhập tên của quý khách: ");
+        let inputTitle = prompt("Nhập tên phim: ");
         if (inputTitle === null) {
             console.log("Hủy thao tác");
-            return;
-        } 
+            return null;
+        }
 
-        if (inputTitle === "") {
-            console.log("Chưa nhập tên");
+        if (inputTitle.trim() === "") {
+            console.log("Chưa nhập tên phim");
             continue;
-        } 
+        }
 
-        const validatedName = validateName(inputTitle);
-        if (validatedName !== "") {
+        validatedTitle = validateName(inputTitle);
+        if (validatedTitle !== "") {
             break;
         }
     }
+
+    let inputTicketPrice = inputPositiveInteger("Nhập giá vé: ");
+    let inputQuantity = inputPositiveInteger("Nhập số lượng vé: ");
+
+    if (inputQuantity === null || inputTicketPrice === null) {
+        console.log("Người dùng hủy thao tác");
+        return;
+    }
+
+    const bill = calculateTotal(inputQuantity, inputTicketPrice);
+
+    const newBooking = {
+        bookingCode: inputCode,
+        customerName: validatedName,
+        movieTitle: validatedTitle,
+        ticketCount: inputQuantity,
+        pricePerTicket: inputTicketPrice,
+        totalAmount: bill.totalAmount
+    }
+    bookings.push(newBooking);
+
+    console.log(`Mã đặt vé: ${inputCode}
+        Khách hàng: ${validatedName}
+        Tên phim: ${validatedTitle}
+        Số vé: ${inputQuantity}
+        Giá mỗi vé: ${inputTicketPrice}
+        Chi phí cơ sở: ${bill.baseCost}
+        Giảm giá: ${bill.discount}
+        Phí dịch vụ: ${bill.serviceFee}
+        Tổng thanh toán: ${bill.totalAmount}`);
 }
 
 
@@ -99,13 +132,14 @@ function validateName(name) {
     let result = [];
 
     for (let i = 0; i < words.length; i++) {
-        if (words.length > 0) {
-            result.push(words[i].charAt(0).toUpperCase() + words.slice(1))
+        if (words[i].length > 0) {
+            result.push(words[i].charAt(0).toUpperCase() + words[i].slice(1))
         }
     }
 
     return result.join(" ");
 }
+
 
 function validateBookingCode(code) {
     const validateCode = String(code).trim().toUpperCase();
@@ -137,12 +171,36 @@ function findBookingIndex(code) {
 
 
 function inputPositiveInteger(message) {
+    while (true) {
+        let numberInput = prompt(message);
 
+        if (numberInput === null) {
+            return null;
+        }
+
+        trimmedNumber = numberInput.trim();
+        parseInNumber = Number(trimmedNumber);
+
+        if (parseInNumber !== NaN && parseInNumber > 0) {
+            return parseInNumber;
+        }
+
+        console.log("Phải là 1 số nguyên lớn hơn 0");
+
+    }
 }
 
 
 function calculateTotal(ticketCount, pricePerTicket) {
+    let baseCost = ticketCount * pricePerTicket;
+    let discount = 0;
+    if (ticketCount === 4) {
+        discount = 0.1;
+    }
+    let serviceFee = 0.08 * (baseCost - (baseCost * discount));
+    let totalAmount = baseCost - (baseCost * discount) + serviceFee;
 
+    return { baseCost, discount, serviceFee, totalAmount };
 }
 
 
@@ -171,7 +229,7 @@ Vui lòng nhập lựa chọn của bạn (0 - 5):`);
             break;
 
         case "2":
-            addNewBooking()
+            addNewBooking();
             break;
 
         case "3":
