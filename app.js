@@ -74,7 +74,7 @@ function addNewBooking() {
             break;
         }
     }
-    
+
 
     let validatedTitle = "";
     while (true) {
@@ -204,6 +204,114 @@ function calculateTotal(ticketCount, pricePerTicket) {
 }
 
 
+function updateBooking() {
+    let code = "";
+
+    while (true) {
+        let inputCode = prompt("Nhập mã vé cần cập nhật: ");
+        if (inputCode === null) {
+            console.log("Hủy thao tác");
+            return;
+        }
+
+        if (inputCode === "") {
+            console.log("Bạn chưa nhập gì");
+            continue;
+        } else {
+            code = inputCode;
+            break;
+        }
+    }
+
+    let index = findBookingIndex(code);
+
+
+    if (index !== -1) {
+        let inputTicketPrice = inputPositiveInteger("Nhập giá vé: ");
+        let inputQuantity = inputPositiveInteger("Nhập số lượng vé: ");
+
+        if (inputQuantity === null || inputTicketPrice === null) {
+            console.log("Người dùng hủy thao tác");
+            return;
+        }
+
+        const bill = calculateTotal(inputQuantity, inputTicketPrice);
+
+        bookings[index].ticketCount = inputQuantity;
+        bookings[index].pricePerTicket = inputTicketPrice;
+        bookings[index].totalAmount = bill.totalAmount;
+
+        console.log(`Mã đặt vé: ${bookings[index].bookingCode}
+        Khách hàng: ${bookings[index].customerName}
+        Tên phim: ${bookings[index].movieTitle}
+        Số vé: ${inputQuantity}
+        Giá mỗi vé: ${inputTicketPrice}
+        Chi phí cơ sở: ${bill.baseCost}
+        Giảm giá: ${bill.discount}
+        Phí dịch vụ: ${bill.serviceFee}
+        Tổng thanh toán: ${bill.totalAmount}`);
+    } else {
+        console.log("Mã vé không tồn tại");
+        return;
+
+    }
+}
+
+
+
+/**
+ * Chức năng 4: Xóa đơn đặt vé khỏi danh sách kèm xác nhận
+ */
+const handleDeleteBooking = () => {
+    const rawCode = prompt("Nhập mã đặt vé cần xóa:");
+    if (rawCode === null) {
+        console.log("Hủy thao tác xóa");
+        return;
+    }
+
+    const bookingCode = rawCode.trim().toUpperCase();
+    const index = findBookingIndex(bookingCode);
+
+    if (index === -1) {
+        console.log(`Không tìm thấy đơn đặt vé có mã ${bookingCode}`);
+        return;
+    }
+
+    const confirmChoice = prompt(`Bạn có chắc chắn muốn xóa đơn ${bookingCode}? (Nhập Y/N):`);
+    if (confirmChoice !== null && confirmChoice.trim().toUpperCase() === "Y") {
+        bookings.splice(index, 1);
+        console.log(`Xóa thành công, còn ${bookings.length} đơn`);
+    } else {
+        console.log(`Đã hủy thao tác xóa, còn ${bookings.length} đơn`);
+    }
+};
+
+/**
+ * Chức năng 5: Tìm kiếm đơn đặt vé theo tên phim (không phân biệt hoa/thường)
+ */
+const handleSearchBookings = () => {
+    const rawKeyword = prompt("Nhập từ khóa tên phim cần tìm kiếm:");
+    if (rawKeyword === null || rawKeyword.trim() === "") {
+        console.log("Chưa nhập từ khóa tìm kiếm");
+        return;
+    }
+
+    const keyword = rawKeyword.trim().toLowerCase();
+    const searchResults = [];
+
+    for (let i = 0; i < bookings.length; i++) {
+        if (bookings[i].movieTitle.toLowerCase().includes(keyword)) {
+            searchResults.push(bookings[i]);
+        }
+    }
+
+    if (searchResults.length === 0) {
+        console.log("Không tìm thấy đơn đặt vé phù hợp");
+        return;
+    }
+
+    displayBookings(searchResults);
+};
 
 
 do {
@@ -233,15 +341,15 @@ Vui lòng nhập lựa chọn của bạn (0 - 5):`);
             break;
 
         case "3":
-
+            updateBooking();
             break;
 
         case "4":
-
+            handleDeleteBooking();
             break;
 
         case "5":
-
+            handleSearchBookings();
             break;
 
 
